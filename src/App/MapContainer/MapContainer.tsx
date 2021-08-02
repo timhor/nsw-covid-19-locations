@@ -89,9 +89,12 @@ function MapContainer({ locations }: { locations: Location[] }) {
 
   const [selected, setSelected] = useState<Location | null>(null);
 
-  const markers = locations.map((location, index) =>
-    generateMarker(location, index, setSelected)
-  );
+  let markers: JSX.Element[] = [];
+  if (locations.length > 0 && isLoaded) {
+    markers = locations.map((location, index) =>
+      generateMarker(location, index, setSelected)
+    );
+  }
 
   return isLoaded ? (
     <GoogleMap mapContainerStyle={containerStyle} center={center} zoom={11}>
