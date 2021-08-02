@@ -32,15 +32,31 @@ async function fetchData() {
 
 function App() {
   const [locations, setLocations] = useState([]);
+  const [lastUpdated, setLastUpdated] = useState({
+    date: 'fetching...',
+    time: '',
+  });
 
   useEffect(() => {
     fetchData().then((rawData: any) => {
       setLocations(rawData.data.monitor);
+      setLastUpdated({ date: rawData.date, time: rawData.time });
     });
   }, []);
 
   return (
     <div className="App">
+      <header>
+        <div>
+          <strong>Last updated: </strong>
+          {`${lastUpdated.date} ${lastUpdated.time}`}
+        </div>
+        <div>
+          <strong>Data source: </strong>
+          NSW Health (
+          <a href="https://creativecommons.org/licenses/by/4.0/">CC-BY 4.0</a>)
+        </div>
+      </header>
       <MapContainer locations={locations} />
     </div>
   );
