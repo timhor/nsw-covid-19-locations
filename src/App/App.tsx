@@ -11,7 +11,19 @@ async function fetchData() {
     const jsonResource = metadataResponse.data.result.resources.find(
       (resource: any) => resource.format === 'JSON'
     );
+
+    const endpoint = localStorage.getItem('endpoint');
+    if (endpoint === jsonResource.url) {
+      const cachedData = localStorage.getItem('data');
+      if (cachedData) {
+        console.debug('Using cached data');
+        return JSON.parse(cachedData);
+      }
+    }
+
     const dataResponse = await axios.get(jsonResource.url);
+    localStorage.setItem('endpoint', jsonResource.url);
+    localStorage.setItem('data', JSON.stringify(dataResponse.data));
     return dataResponse.data;
   } catch {
     throw new Error('Failed to fetch data');
