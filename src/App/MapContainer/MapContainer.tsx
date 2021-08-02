@@ -1,7 +1,12 @@
-import React from 'react';
-import { useJsApiLoader, GoogleMap, Marker } from '@react-google-maps/api';
+import React, { useState } from 'react';
+import {
+  useJsApiLoader,
+  GoogleMap,
+  Marker,
+  InfoWindow,
+} from '@react-google-maps/api';
 import { Location } from '../types';
-import { AlertType, getAlertType } from '../utils';
+import { AlertType, coordsToPosition, getAlertType } from '../utils';
 
 const apiKey = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
 
@@ -54,10 +59,26 @@ function getIcon(alert: string) {
   }
 }
 
-function generateMarker(location: Location, index: number) {
-  const position = { lat: Number(location.Lat), lng: Number(location.Lon) };
+function generateMarker(
+  location: Location,
+  index: number,
+  setSelected: Function
+) {
+  const position = coordsToPosition({ lat: location.Lat, lng: location.Lon });
   const icon = getIcon(location.Alert);
-  return <Marker key={index} position={position} icon={icon} />;
+  const onClick = () => {
+    setSelected(location);
+  };
+
+  return (
+    <Marker
+      key={index}
+      title={location.Venue}
+      position={position}
+      icon={icon}
+      onClick={onClick}
+    />
+  );
 }
 
 function MapContainer({ locations }: { locations: Location[] }) {
@@ -66,12 +87,36 @@ function MapContainer({ locations }: { locations: Location[] }) {
     googleMapsApiKey: apiKey!,
   });
 
+  const [selected, setSelected] = useState<Location | null>(null);
+
   const markers = locations.map((location, index) =>
-    generateMarker(location, index)
+    generateMarker(location, index, setSelected)
   );
 
   return isLoaded ? (
     <GoogleMap mapContainerStyle={containerStyle} center={center} zoom={11}>
+      {selected && (
+        <InfoWindow
+          position={coordsToPosition({ lat: selected.Lat, lng: selected.Lon })}
+          onCloseClick={() => {
+            setSelected(null);
+          }}
+        >
+          <>
+            <h3>Venue</h3>
+            <p>
+              <em>{selected.Venue}</em>
+            </p>
+            <p>{`${selected.Address}, ${selected.Suburb}`}</p>
+            <h3>Date &amp; Time</h3>
+            <p>{`${selected.Date}, ${selected.Time}`}</p>
+            <h3>Health Advice</h3>
+            <p
+              dangerouslySetInnerHTML={{ __html: selected.HealthAdviceHTML }}
+            />
+          </>
+        </InfoWindow>
+      )}
       {markers}
     </GoogleMap>
   ) : null;

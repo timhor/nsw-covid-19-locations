@@ -21,3 +21,13 @@ export function getAlertType(alert: string) {
   }
   return AlertType.UNKNOWN;
 }
+
+export function coordsToPosition({
+  lat,
+  lng,
+}: {
+  lat: string | number;
+  lng: string | number;
+}) {
+  return { lat: Number(lat), lng: Number(lng) };
+}
