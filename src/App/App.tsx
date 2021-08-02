@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import './App.css';
-import { Location } from './types';
+import MapContainer from './MapContainer/MapContainer';
 
 async function fetchData() {
   const METADATA_URL =
@@ -29,9 +29,7 @@ function App() {
 
   return (
     <div className="App">
-      {locations.map((location: Location, index: number) => {
-        return <pre key={index}>{`${location.Venue} | ${location.Date}`}</pre>;
-      })}
+      <MapContainer />
     </div>
   );
 }
