@@ -29,7 +29,7 @@ function App() {
 
   return (
     <div className="App">
-      <MapContainer />
+      <MapContainer locations={locations} />
     </div>
   );
 }

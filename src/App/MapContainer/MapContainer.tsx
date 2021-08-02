@@ -1,5 +1,6 @@
 import React from 'react';
-import { useJsApiLoader, GoogleMap } from '@react-google-maps/api';
+import { useJsApiLoader, GoogleMap, Marker } from '@react-google-maps/api';
+import { Location } from '../types';
 
 const apiKey = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
 
@@ -13,7 +14,7 @@ const center = {
   lng: 151.04,
 };
 
-function MapContainer() {
+function MapContainer({ locations }: { locations: Location[] }) {
   const { isLoaded } = useJsApiLoader({
     id: 'google-map-script',
     googleMapsApiKey: apiKey!,
@@ -21,8 +22,12 @@ function MapContainer() {
 
   return isLoaded ? (
     <GoogleMap mapContainerStyle={containerStyle} center={center} zoom={11}>
-      {/* Child components, such as markers, info windows, etc. */}
-      <></>
+      {locations.map((location, index) => (
+        <Marker
+          key={index}
+          position={{ lat: Number(location.Lat), lng: Number(location.Lon) }}
+        />
+      ))}
     </GoogleMap>
   ) : null;
 }
