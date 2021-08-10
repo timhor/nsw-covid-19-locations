@@ -9,6 +9,7 @@ import { Location } from '../types';
 import { AlertType, coordsToPosition, getAlertType } from '../utils';
 
 const apiKey = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
+const markerBasePath = `${process.env.PUBLIC_URL}/markers`;
 
 const containerStyle = {
   width: '100vw',
@@ -22,11 +23,8 @@ const center = {
 
 function getIcon(alert: string) {
   const ALERT_ICON_COMMON = {
-    path: google.maps.SymbolPath.CIRCLE,
-    scale: 6,
-    strokeColor: 'white',
-    strokeWeight: 2,
-    fillOpacity: 1.0,
+    scaledSize: new google.maps.Size(12, 12),
+    anchor: new google.maps.Point(6, 6),
   };
 
   const alertType = getAlertType(alert);
@@ -34,27 +32,27 @@ function getIcon(alert: string) {
     case AlertType.CLOSE:
       return {
         ...ALERT_ICON_COMMON,
-        fillColor: 'red',
+        url: `${markerBasePath}/red-circle.png`,
       };
     case AlertType.ADVICE:
       return {
         ...ALERT_ICON_COMMON,
-        fillColor: 'brown',
+        url: `${markerBasePath}/brown-circle.png`,
       };
     case AlertType.CASUAL:
       return {
         ...ALERT_ICON_COMMON,
-        fillColor: 'orange',
+        url: `${markerBasePath}/orange-circle.png`,
       };
     case AlertType.MONITOR:
       return {
         ...ALERT_ICON_COMMON,
-        fillColor: '#0398fc',
+        url: `${markerBasePath}/blue-circle.png`,
       };
     default:
       return {
         ...ALERT_ICON_COMMON,
-        fillColor: 'black',
+        url: `${markerBasePath}/black-circle.png`,
       };
   }
 }
