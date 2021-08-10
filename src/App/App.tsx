@@ -53,8 +53,10 @@ function App() {
         </div>
         <div>
           <strong>Data source: </strong>
-          NSW Health (
-          <a href="https://creativecommons.org/licenses/by/4.0/">CC-BY 4.0</a>)
+          <a href="https://data.nsw.gov.au/nsw-covid-19-data/case-locations">
+            NSW Health
+          </a>{' '}
+          (<a href="https://creativecommons.org/licenses/by/4.0/">CC-BY 4.0</a>)
         </div>
       </header>
       <MapContainer locations={locations} />
