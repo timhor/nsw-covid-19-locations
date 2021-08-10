@@ -115,6 +115,9 @@ function MapContainer({ locations }: { locations: Location[] }) {
 
   const onLoad = (mapInstance: google.maps.Map) => {
     setMapInstance(mapInstance);
+    mapInstance.addListener('click', () => {
+      setSelected(null);
+    });
   };
 
   const onIdle = useCallback(() => {
