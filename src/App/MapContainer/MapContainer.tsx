@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import {
   useJsApiLoader,
   GoogleMap,
@@ -88,16 +88,39 @@ function MapContainer({ locations }: { locations: Location[] }) {
   });
 
   const [selected, setSelected] = useState<Location | null>(null);
+  const [mapInstance, setMapInstance] = useState<google.maps.Map | null>(null);
 
-  let markers: JSX.Element[] = [];
-  if (locations.length > 0 && isLoaded) {
-    markers = locations.map((location, index) =>
-      generateMarker(location, index, setSelected)
+  let allMarkers = useMemo(() => {
+    if (locations.length > 0 && isLoaded) {
+      return locations.map((location, index) =>
+        generateMarker(location, index, setSelected)
+      );
+    }
+    return [];
+  }, [locations, isLoaded]);
+
+  const [markers, setMarkers] = useState<JSX.Element[]>([...allMarkers]);
+
+  const onLoad = (mapInstance: google.maps.Map) => {
+    setMapInstance(mapInstance);
+  };
+
+  const onIdle = useCallback(() => {
+    const bounds = mapInstance?.getBounds();
+    const filteredMarkers = allMarkers.filter((marker) =>
+      bounds!.contains(marker.props.position)
     );
-  }
+    setMarkers(filteredMarkers);
+  }, [mapInstance, allMarkers]);
 
   return isLoaded ? (
-    <GoogleMap mapContainerStyle={containerStyle} center={center} zoom={11}>
+    <GoogleMap
+      onLoad={onLoad}
+      onIdle={onIdle}
+      mapContainerStyle={containerStyle}
+      center={center}
+      zoom={11}
+    >
       {selected && (
         <InfoWindow
           position={coordsToPosition({ lat: selected.Lat, lng: selected.Lon })}
