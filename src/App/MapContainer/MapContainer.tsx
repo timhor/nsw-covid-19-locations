@@ -21,6 +21,13 @@ const center = {
   lng: 151.04,
 };
 
+const mapOptions: google.maps.MapOptions = {
+  gestureHandling: 'greedy',
+  clickableIcons: false,
+  mapTypeControl: false,
+  streetViewControl: false,
+};
+
 function getIcon(alert: string) {
   const ALERT_ICON_COMMON = {
     scaledSize: new google.maps.Size(12, 12),
@@ -118,6 +125,7 @@ function MapContainer({ locations }: { locations: Location[] }) {
       mapContainerStyle={containerStyle}
       center={center}
       zoom={11}
+      options={mapOptions}
     >
       {selected && (
         <InfoWindow
