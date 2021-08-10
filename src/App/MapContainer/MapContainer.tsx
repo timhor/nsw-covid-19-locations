@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import {
   useJsApiLoader,
   GoogleMap,
@@ -104,7 +104,14 @@ function MapContainer({ locations }: { locations: Location[] }) {
     return [];
   }, [locations, isLoaded]);
 
-  const [markers, setMarkers] = useState<JSX.Element[]>([...allMarkers]);
+  // Ensure markers are drawn on first load, even before map interaction
+  useEffect(() => {
+    setActiveMarkers(allMarkers);
+  }, [allMarkers]);
+
+  const [activeMarkers, setActiveMarkers] = useState<JSX.Element[]>([
+    ...allMarkers,
+  ]);
 
   const onLoad = (mapInstance: google.maps.Map) => {
     setMapInstance(mapInstance);
@@ -115,7 +122,7 @@ function MapContainer({ locations }: { locations: Location[] }) {
     const filteredMarkers = allMarkers.filter((marker) =>
       bounds!.contains(marker.props.position)
     );
-    setMarkers(filteredMarkers);
+    setActiveMarkers(filteredMarkers);
   }, [mapInstance, allMarkers]);
 
   return isLoaded ? (
@@ -149,7 +156,7 @@ function MapContainer({ locations }: { locations: Location[] }) {
           </>
         </InfoWindow>
       )}
-      {markers}
+      {activeMarkers}
     </GoogleMap>
   ) : null;
 }
